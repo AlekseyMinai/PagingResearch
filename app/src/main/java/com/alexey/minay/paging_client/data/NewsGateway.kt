@@ -1,5 +1,6 @@
 package com.alexey.minay.paging_client.data
 
+import android.util.Log
 import com.alexey.minay.paging_client.data.json.GetPageResponseJson
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -14,8 +15,14 @@ class NewsGateway(
     suspend fun getNews(page: Int) =
         wrapRequest<String> {
             //bad connection
-            delay(5000)
-            httpClient.get("http://10.0.2.2:8080/pages/$page")
+            delay(400)
+
+            Log.d("NewsGateway", "Load page $page")
+
+            httpClient.get(
+                "https://raw.githubusercontent.com/AlekseyMinai/" +
+                        "PagingResearch/main/fake/$page.json"
+            )
         }.map {
             Json.decodeFromString<GetPageResponseJson>(this)
         }

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.alexey.minay.paging_client.R
 import com.alexey.minay.paging_client.data.NewsGateway
 import com.alexey.minay.paging_client.databinding.ActivityMainBinding
 import com.alexey.minay.paging_client.presentation.MainViewModel
@@ -15,7 +14,6 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,7 +38,11 @@ class MainActivity : AppCompatActivity() {
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.news.adapter = mAdapter.withLoadStateFooter(NewsLoadStateAdapter())
+        binding.news.adapter = mAdapter.withLoadStateFooter(NewsLoadStateAdapter(
+            onRetryClicked = {
+                mAdapter.retry()
+            }
+        ))
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -48,6 +50,14 @@ class MainActivity : AppCompatActivity() {
                     mAdapter.submitData(it)
                 }
             }
+        }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            mAdapter.refresh()
+        }
+
+        mAdapter.addLoadStateListener {
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 }
