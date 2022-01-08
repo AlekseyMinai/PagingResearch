@@ -15,14 +15,11 @@ class NewsGateway(
     suspend fun getNews(page: Int) =
         wrapRequest<String> {
             //bad connection
-            delay(400)
+            delay(500)
 
             Log.d("NewsGateway", "Load page $page")
 
-            httpClient.get(
-                "https://raw.githubusercontent.com/AlekseyMinai/" +
-                        "PagingResearch/main/fake/$page.json"
-            )
+            httpClient.get("http://10.0.2.2:8080/pages/$page")
         }.map {
             Json.decodeFromString<GetPageResponseJson>(this)
         }

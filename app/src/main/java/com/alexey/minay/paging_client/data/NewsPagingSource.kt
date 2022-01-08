@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.alexey.minay.paging_client.domain.News
 
-class MyPagingSource(
+class NewsPagingSource(
     private val gateway: NewsGateway
 ) : PagingSource<Int, News>() {
 
